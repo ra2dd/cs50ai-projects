@@ -92,6 +92,52 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
+    # Function for checking if node is a target
+    def check_solution(checked_node):
+        if checked_node.state == target:
+            path_pairs = []
+            while checked_node.parent is not None:
+                path_pairs.append((checked_node.action, checked_node.state))
+                checked_node = checked_node.parent
+
+            path_pairs.reverse()
+            # print(f'iterations={num_explored}')
+            # print(path_pairs)
+            return path_pairs
+
+    # Keeping track of explored records
+    num_explored = 0
+    explored = set()
+    solutions = []
+
+    # Initialize stack and add a root node
+    start = Node(source, None, None)
+    # Check if start node is a target
+    if check_solution(start):
+        return check_solution(start)
+    frontier = QueueFrontier()
+    frontier.add(start)
+    
+    while True:
+        # Empty stack - no solution
+        if frontier.empty():
+            return None
+        
+        # remove node from a stack and assign it to vairable
+        node = frontier.remove()
+        num_explored += 1
+        explored.add(node.state)
+
+        # Check adjecent people and add them to a stack
+        for movie_id, person_id in neighbors_for_person(node.state):
+            if not frontier.contains_state(person_id) and person_id not in explored:
+                child = Node(state=person_id, parent=node, action=movie_id)
+                frontier.add(child)
+                
+                # check if node is a target
+                if check_solution(child):
+                    return check_solution(child)
+
 
 def person_id_for_name(name):
     """
