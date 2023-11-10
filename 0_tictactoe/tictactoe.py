@@ -42,9 +42,9 @@ def actions(board):
 
     actions = set()
 
-    for id1, row in board:
-        for id2, col in row:
-            if col != X and col != O and col != EMPTY:
+    for id1, row in enumerate(board):
+        for id2, col in enumerate(row):
+            if col != X and col != O and col == EMPTY:
                 actions.add((id1, id2))
 
     return actions
@@ -54,11 +54,22 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    new_board = board
-    new_board[action[0]][action[1]] = player(board)
+    def action_number_ok(action):
+        if action == 0 or action == 1 or action == 2:
+            return True
+        else:
+            return False
+        
+    if action_number_ok(action[0]) == False or action_number_ok(action[1]) == False:
+        raise Exception(f'Action is out of the board, action = {action}')
+    elif board[action[0]][action[1]] != None:
+        raise Exception('Move from an action is already taken.')
 
+    import copy
+    new_board = copy.deepcopy(board)
+    new_board[action[0]][action[1]] = player(board)
+    
     return new_board
-    # Todo raise exception on bad board
 
 
 def winner(board):
@@ -127,4 +138,44 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    def max_value(board):
+        value = -1000
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            value = max(value, min_value(result(board, action)))
+        return value
+
+    def min_value(board):
+        value = 1000
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            value = min(value, max_value(result(board, action)))
+        return value
+    
+    if terminal(board):
+        return None
+    
+    next_move = player(board)
+    if next_move == O:
+        value = 1000
+        best_move = None
+        for action in actions(board):
+            check_min = min(value, max_value(result(board, action)))
+            if check_min < value:
+                best_move = action
+            value = check_min
+
+        return best_move
+    
+    elif next_move == X:
+        value = -1000
+        best_move = None
+        for action in actions(board):
+            check_max = max(value, min_value(result(board, action)))
+            if check_max > value:
+                best_move = action
+            value = check_max
+
+        return best_move

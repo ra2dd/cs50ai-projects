@@ -108,6 +108,10 @@ class TestTictactoe(unittest.TestCase):
         self.assertEqual(ttt.utility(x_won), 1)
         self.assertEqual(ttt.utility(o_won), -1)
         self.assertEqual(ttt.utility(draw), 0)
+    
+    def test_minmax(self):
+        self.assertEqual(ttt.minimax(o_turn), (1,0))
+        self.assertIsNone(ttt.minimax(draw))
 
 if __name__ == '__main__':
     unittest.main()
