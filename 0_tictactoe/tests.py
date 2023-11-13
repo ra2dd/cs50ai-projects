@@ -29,6 +29,12 @@ x_won = [
     [X, X, O]
 ]
 
+o_won_cross = [
+    [O, X, O],
+    [X, O, EMPTY],
+    [X, X, O]
+]
+
 o_won = [
     [X, EMPTY, O],
     [EMPTY, X, O],
@@ -107,6 +113,7 @@ class TestTictactoe(unittest.TestCase):
     def test_outcome(self):
         self.assertEqual(ttt.utility(x_won), 1)
         self.assertEqual(ttt.utility(o_won), -1)
+        self.assertEqual(ttt.utility(o_won_cross), -1)
         self.assertEqual(ttt.utility(draw), 0)
     
     def test_minmax(self):
